@@ -9,17 +9,19 @@ enum{
 
 Font font;
 
-// TODO: Refac this file
+// DONE: Refac this file
 
-static void chip8_draw_hardware_components(
+static void chip8_draw_hardware_component(
     const Vector2 pos, 
     const char* name, 
     const char* value,
-    const int spacing,
-    const Color color,
-    const int font_size,
-    const int font_spacing
+    const Color color
 ){
+    const int value_spacing = 65;
+    const int name_spacing = 40;
+    const int font_size = 16;
+    const int font_spacing = 2;
+
     DrawTextEx(
         font,
         name,
@@ -32,7 +34,7 @@ static void chip8_draw_hardware_components(
         font,
         "=",
         (Vector2){
-            pos.x + spacing,
+            pos.x + name_spacing,
             pos.y
         },
         font_size,
@@ -43,7 +45,7 @@ static void chip8_draw_hardware_components(
         font,
         value,
         (Vector2){
-            pos.x + spacing + 25,
+            pos.x + value_spacing,
             pos.y
         },
         font_size,
@@ -56,6 +58,7 @@ static void chip8_draw_hardware_components(
 static void chip8_draw_display_area(
     const Chip8VM* vm
 ){
+    const int font_spacing = 2;
     const Rectangle chip8_pixel = {
         26,
         28,
@@ -63,18 +66,30 @@ static void chip8_draw_display_area(
         12,
     };
 
+    const int title_size = 18;
+    const int title_x = 10;
+    const int title_y = 6;
+
+    const float line_thickness = 2.0;
+    const Rectangle external_display_line = {
+        2,
+        2,
+        4,
+        4
+    };
+
     DrawTextEx(
         font,
         "Display",
-        (Vector2){chip8_pixel.width  + 10,
-        chip8_pixel.height - 6},
-        18,
-        2,
+        (Vector2){chip8_pixel.width + title_x,
+        chip8_pixel.height - title_y},
+        title_size,
+        font_spacing,
         GREEN
     );
 
     for(int i = 0; i < CHIP8_DISPLAY_HEIGHT; i++)
-        for (int j = 0; j < CHIP8_DISPLAY_WIDGHT; j++)
+        for (int j = 0; j < CHIP8_DISPLAY_WIDTH; j++)
             DrawRectangle( 
                 chip8_pixel.x + j * chip8_pixel.width,
                 chip8_pixel.y + i * chip8_pixel.height,
@@ -84,11 +99,11 @@ static void chip8_draw_display_area(
             );
 
     DrawRectangleLinesEx(
-        (Rectangle){chip8_pixel.x - 2,
-        chip8_pixel.y - 2,
-        chip8_pixel.width * CHIP8_DISPLAY_WIDGHT + 4,
-        chip8_pixel.height * CHIP8_DISPLAY_HEIGHT + 4},
-        2.0,
+        (Rectangle){chip8_pixel.x - external_display_line.x,
+        chip8_pixel.y - external_display_line.y,
+        chip8_pixel.width * CHIP8_DISPLAY_WIDGHT + external_display_line.width,
+        chip8_pixel.height * CHIP8_DISPLAY_HEIGHT + external_display_line.height},
+        line_thickness,
         GREEN
     );
 }
@@ -103,93 +118,82 @@ static void chip8_draw_hardware_components_area(
         364
     };
 
-  
+    const float line_thickness = 2.0;
+    const int text_x = 10;
+    const int text_y = 20;
+    const int text_height = 20;
+    const int text_widght = 145;
+    const int font_spacing = 2;
+    const int title_size = 18;
+
     DrawTextEx(
             font,
             "Registers | Stack",
             (Vector2){hardware_components_box.x,
-            hardware_components_box.y - 20},
-            18,
-            2,
+            hardware_components_box.y - text_widght},
+            title_size,
+            font_spacing,
             GREEN
         );
 
+    const int stack_size = sizeof(vm->stack)/sizeof(vm->stack[0]);
+    int stack_offset = (vm->sp >= stack_size/2)? stack_size/2 : 0;
 
-    int stack_offset = (vm->sp >= 8)? 8 : 0;
-
-    for(int i = 0; i < 16; i ++){
+    for(int i = 0; i < stack_size/2 ; i ++){
         
-        chip8_draw_hardware_components(
-            (Vector2){hardware_components_box.x + 10,
-            hardware_components_box.y + i * 20 + 20},
+        chip8_draw_hardware_component(
+            (Vector2){hardware_components_box.x + text_x,
+            hardware_components_box.y + i * text_height + text_y},
             TextFormat("V%X", i),
             TextFormat("0x%.2X", vm->V[i]),
-            40,
-            GREEN,
-            16,
-            2
+            GREEN
         );
 
         switch (i)
         {
         case 0:
-            chip8_draw_hardware_components(
-                (Vector2){hardware_components_box.x + 155,
-                hardware_components_box.y + i * 20 + 20},
+            chip8_draw_hardware_component(
+                (Vector2){hardware_components_box.x + text_widght + text_x,
+                hardware_components_box.y + i * text_height + text_y},
                 "I",
                 TextFormat("0x%.4X", vm->I),
-                40,
-                GREEN,
-                16,
-                2
+                GREEN
             );
             break;
         case 1:
-            chip8_draw_hardware_components(
-                (Vector2){hardware_components_box.x + 155,
-                hardware_components_box.y + i * 20 + 20},
+            chip8_draw_hardware_component(
+                (Vector2){hardware_components_box.x + text_widght + text_x,
+                hardware_components_box.y + i * text_height + text_y},
                 "PC",
                 TextFormat("0x%.4X", vm->pc),
-                40,
-                GREEN,
-                16,
-                2
+                GREEN
             );
             break;
         case 2:
-            chip8_draw_hardware_components(
-                (Vector2){hardware_components_box.x + 155,
-                hardware_components_box.y + i * 20 + 20},
+            chip8_draw_hardware_component(
+                (Vector2){hardware_components_box.x + text_widght + text_x,
+                hardware_components_box.y + i * text_height + text_y},
                 "SP",
                 TextFormat("0x%.2X", vm->sp),
-                40,
-                GREEN,
-                16,
-                2
+                GREEN
             );
             break;
         case 4:
-            chip8_draw_hardware_components(
-                (Vector2){hardware_components_box.x + 155,
-                hardware_components_box.y + i * 20 + 20},
+            chip8_draw_hardware_component(
+                (Vector2){hardware_components_box.x + text_widght + text_x,
+                hardware_components_box.y + i * text_height + text_y},
                 "DT",
                 TextFormat("0x%.2X", vm->delay_timer),
-                40,
-                GREEN,
-                16,
-                2
+                GREEN
             );
             break;
         case 5:
-            chip8_draw_hardware_components(
-                (Vector2){hardware_components_box.x + 155,
-                hardware_components_box.y + i * 20 + 20},
+            chip8_draw_hardware_component(
+                (Vector2){hardware_components_box.x + text_widght + text_x,
+                hardware_components_box.y + i * text_height + text_y},
                 "ST",
                 TextFormat("0x%.2X", vm->sound_timer),
-                40,
-                GREEN,
-                16,
-                2
+                GREEN
             );
             break;
         default:
@@ -198,15 +202,12 @@ static void chip8_draw_hardware_components_area(
 
         
         if (i >= 8){
-            chip8_draw_hardware_components(
-                (Vector2){hardware_components_box.x + 155,
-                hardware_components_box.y + i * 20 + 18},
+            chip8_draw_hardware_component(
+                (Vector2){hardware_components_box.x + text_widght + text_x,
+                hardware_components_box.y + i * text_height + text_y},
                 TextFormat("S%.1X", stack_offset),
                 TextFormat("0x%.4X", vm->stack[stack_offset]),
-                40,
-                GREEN,
-                16,
-                2
+                GREEN
             );
             stack_offset += 1;
         }
@@ -215,7 +216,7 @@ static void chip8_draw_hardware_components_area(
 
     DrawRectangleLinesEx(
         hardware_components_box,
-        2.0,
+        line_thickness,
         GREEN
     );
 }
@@ -224,11 +225,13 @@ static void chip8_draw_memory_line(
     const Vector2 pos,
     const char* instruction, 
     const char* memory_address, 
-    const int spacing,
-    const Color color,
-    const int font_size,
-    const int font_spacing
+    const Color color
 ){
+    const int mem_addr_spacing = 75;
+    const int instruction_spacing = 108;
+    const int font_size = 12;
+    const int font_spacing = 2;
+
     DrawTextEx(
         font,
         memory_address,
@@ -241,7 +244,7 @@ static void chip8_draw_memory_line(
         font,
         "-",
         (Vector2){
-            pos.x + spacing,
+            pos.x + mem_addr_spacing,
             pos.y
         },
         font_size,
@@ -252,7 +255,7 @@ static void chip8_draw_memory_line(
         font,
         instruction,
         (Vector2){
-            pos.x + spacing + 33,
+            pos.x + instruction_spacing,
             pos.y
         },
         font_size,
@@ -271,45 +274,51 @@ static void chip8_draw_memory_area(
         280
     };
 
+    const float line_thickness = 2.0;
+    const int title_size = 18;
+    const int font_spacing = 2;
+    const int displayed_lines = 14;
+    const int text_height = 19;
+    const int text_x = 10;
+    const int text_y = 12;
+
+
     DrawTextEx(
         font,
         "Memory",
         (Vector2){memory_box.x,
         memory_box.y - 20},
-        18,
-        2,
+        title_size,
+        font_spacing,
         GREEN
     );
     
     int mem_offset = (vm->pc - PC_INITIAL_OFFSET)/2;
     
-    if (mem_offset > vm->memory.rom_size/2 - 14){
-        mem_offset = vm->memory.rom_size/2 - 14;
-    }
+    if (mem_offset > vm->memory.rom_size/2 - displayed_lines)
+        mem_offset = vm->memory.rom_size/2 - displayed_lines;
+    
 
     for (int text_offset = 0; 
-        text_offset < 14; 
+        text_offset < displayed_lines; 
         mem_offset ++, text_offset++
     ){
         chip8_draw_memory_line(
             (Vector2){
-                memory_box.x + 10,
-                memory_box.y + 12 +(text_offset) * 19
+                memory_box.x + text_x,
+                memory_box.y + text_y + text_offset * text_height
             },
             vm->dissasembly[mem_offset],
             TextFormat(
-                "0x%.4X", (mem_offset + PC_INITIAL_OFFSET)*2
+                "0x%.4X", (mem_offset + PC_INITIAL_OFFSET) * 2
             ),
-            75,
-            GREEN,
-            12,
-            2
+            GREEN
         );
     }
 
     DrawRectangleLinesEx(
         memory_box,
-        2.0,
+        line_thickness,
         GREEN
     );
             

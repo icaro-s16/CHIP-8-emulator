@@ -199,13 +199,13 @@ void execute_sprite(
     if (decoded_opcode->optype !=  SPRITE)
         execute_err(decoded_opcode);
 
-    int x = vm->V[decoded_opcode->vx] % CHIP8_DISPLAY_WIDGHT;
+    int x = vm->V[decoded_opcode->vx] % CHIP8_DISPLAY_WIDTH;
     int y = vm->V[decoded_opcode->vy] % CHIP8_DISPLAY_HEIGHT;
     vm->V[0xFu] = 0;
     for(int row = 0; row < decoded_opcode->constant; row++){
         byte sprite_byte = vm->memory.mem[vm->I + row];
         for(int col = 0; col < 8; col++){
-            byte *screen_pixel = &(vm->display[(y + row) % CHIP8_DISPLAY_HEIGHT][(x + col) % CHIP8_DISPLAY_WIDGHT]);
+            byte *screen_pixel = &(vm->display[(y + row) % CHIP8_DISPLAY_HEIGHT][(x + col) % CHIP8_DISPLAY_WIDTH]);
             if (!(sprite_byte & (0x80u >> col)))
                 continue;
 

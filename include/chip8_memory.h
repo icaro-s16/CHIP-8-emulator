@@ -7,7 +7,7 @@
 
 
 enum {
-    CHIP8_DISPLAY_WIDGHT    = 64,
+    CHIP8_DISPLAY_WIDTH    = 64,
     CHIP8_DISPLAY_HEIGHT    = 32,
     KEYS_SIZE               = 16,
     MEM_MAX_SIZE            = 4096,
