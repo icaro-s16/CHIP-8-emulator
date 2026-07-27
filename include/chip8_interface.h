@@ -21,8 +21,6 @@
     X(KEY_C, 0x14u)          \
     X(KEY_V, 0x15u)
 
-static Font font;
-
 static void chip8_draw_hardware_components(
     const Vector2 pos, 
     const char* name, 
