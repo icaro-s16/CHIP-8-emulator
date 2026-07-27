@@ -11,13 +11,13 @@
 
 
 
-static ulong sec_to_nsec(const ulong sec);
+static uint32_t sec_to_nsec(const uint32_t sec);
 
-static void chip8_sync_execution(const struct timespec last, const struct timespec now, const ulong time_per_op);
+static void chip8_sync_execution(const struct timespec last, const struct timespec now, const uint32_t time_per_op);
 
 static int chip8_sync_timer_update(struct timespec* time);
 
-void chip8_emulator_run(const char* room_name, const ulong op_per_sec);
+void chip8_emulator_run(const char* room_name, const uint32_t op_per_sec);
 
 static Chip8VM chip8_vm_construct(const char* rom_name);
 

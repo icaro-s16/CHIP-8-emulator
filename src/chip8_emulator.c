@@ -1,8 +1,8 @@
 #include "chip8_emulator.h"
 
 
-static inline ulong sec_to_nsec(
-    ulong sec
+static inline uint32_t sec_to_nsec(
+    uint32_t sec
 ){
     return sec * 1000000000;
 }
@@ -10,9 +10,9 @@ static inline ulong sec_to_nsec(
 static void chip8_sync_execution(
     const struct timespec last_time, 
     const struct timespec cur_time, 
-    const ulong time_per_op
+    const uint32_t time_per_op
 ){
-    ulong delta = (
+    uint32_t delta = (
         (cur_time.tv_sec * sec_to_nsec(1) + cur_time.tv_nsec) -
         (last_time.tv_sec * sec_to_nsec(1) + last_time.tv_nsec)
     );
@@ -32,8 +32,8 @@ static void chip8_sync_execution(
 static int chip8_sync_timer_update(
     struct timespec* last_time
 ){
-    const ulong timer_update_per_sec = 60 / sec_to_nsec(1);
-    static ulong delta = 0; 
+    const uint32_t timer_update_per_sec = 60 / sec_to_nsec(1);
+    static uint32_t delta = 0; 
     struct timespec cur_time = {0};
     clock_gettime(CLOCK_MONOTONIC, &cur_time);
     
@@ -52,7 +52,7 @@ static int chip8_sync_timer_update(
 
 void chip8_emulator_run(
     const char* rom_name,
-    const ulong op_per_sec
+    const uint32_t op_per_sec
 ){
     assert(rom_name != NULL);
 

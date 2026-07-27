@@ -1,12 +1,13 @@
 #include "chip8_emulator.h"
 
+
 int main(
     int argc, 
     char** argv
 ){
-    ulong op_per_sec = 700;
+    uint32_t op_per_sec = 700;
 
-    if (argc > 3 || argc < 2){
+    if (argc > 3){
         fprintf(
             stderr, 
             "ERROR: Incorrect usage. The correct usage is \"./<bin> <rom path> <operation per sec>\"..\n"
