@@ -66,7 +66,7 @@ typedef struct Chip8VM Chip8VM;
 struct Chip8VM{
     char **dissasembly;
     Memory memory;                                              // Done: Change the memory logic
-    byte display[CHIP8_DISPLAY_HEIGHT][CHIP8_DISPLAY_WIDGHT];
+    byte display[CHIP8_DISPLAY_HEIGHT][CHIP8_DISPLAY_WIDTH];
     addr stack[16];
     byte keys[KEYS_SIZE];
     byte V[V_REG_SIZE];

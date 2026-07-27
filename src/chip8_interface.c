@@ -101,7 +101,7 @@ static void chip8_draw_display_area(
     DrawRectangleLinesEx(
         (Rectangle){chip8_pixel.x - external_display_line.x,
         chip8_pixel.y - external_display_line.y,
-        chip8_pixel.width * CHIP8_DISPLAY_WIDGHT + external_display_line.width,
+        chip8_pixel.width * CHIP8_DISPLAY_WIDTH + external_display_line.width,
         chip8_pixel.height * CHIP8_DISPLAY_HEIGHT + external_display_line.height},
         line_thickness,
         GREEN

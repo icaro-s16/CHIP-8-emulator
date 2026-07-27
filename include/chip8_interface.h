@@ -25,7 +25,7 @@ static void chip8_draw_hardware_component(
     const Vector2 pos, 
     const char* name, 
     const char* value,
-    const Color color,
+    const Color color
 );
 
 static void chip8_draw_display_area(const Chip8VM* vm);
@@ -36,7 +36,7 @@ static void chip8_draw_memory_line(
     const Vector2 pos,
     const char* instruction, 
     const char* memory_address, 
-    const Color color,
+    const Color color
 );
 
 static void chip8_draw_memory_area(const Chip8VM* vm);
