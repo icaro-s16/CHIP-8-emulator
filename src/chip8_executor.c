@@ -24,9 +24,9 @@ void execute_bcd(
     if (decoded_opcode->optype != BCD)
         execute_err(decoded_opcode);
 
-    vm->memory.write(&vm->memory, vm->I, vm->V[decoded_opcode->vx] / 100);
-    vm->memory.write(&vm->memory, vm->I + 1, (vm->V[decoded_opcode->vx] / 10) % 10);
-    vm->memory.write(&vm->memory, vm->I + 2, vm->V[decoded_opcode->vx] % 10);
+    vm->memory.mem[vm->I] = vm->V[decoded_opcode->vx] / 100;
+    vm->memory.mem[vm->I + 1] = (vm->V[decoded_opcode->vx] / 10) % 10;
+    vm->memory.mem[vm->I + 2] = vm->V[decoded_opcode->vx] % 10;
 }
 
 void execute_or_rr(
@@ -78,7 +78,7 @@ void execute_shr(
     if (decoded_opcode->optype !=  SHR)
         execute_err(decoded_opcode);
 
-    vm->V[0xF] = vm->V[decoded_opcode->vx] & 0x1u;
+    vm->V[0xFu] = vm->V[decoded_opcode->vx] & 0x1u;
     vm->V[decoded_opcode->vx] >>= 1;
 }
 
@@ -92,7 +92,7 @@ void execute_shl(
     if (decoded_opcode->optype !=  SHL)
         execute_err(decoded_opcode);
 
-    vm->V[0xF] = vm->V[decoded_opcode->vx] & 0x80u;
+    vm->V[0xFu] = vm->V[decoded_opcode->vx] & 0x80u;
     vm->V[decoded_opcode->vx] <<= 1;
 }
 
@@ -201,16 +201,16 @@ void execute_sprite(
 
     int x = vm->V[decoded_opcode->vx] % CHIP8_DISPLAY_WIDGHT;
     int y = vm->V[decoded_opcode->vy] % CHIP8_DISPLAY_HEIGHT;
-    vm->V[0xF] = 0;
+    vm->V[0xFu] = 0;
     for(int row = 0; row < decoded_opcode->constant; row++){
-        byte sprite_byte = vm->memory.read(&vm->memory, vm->I + row);
+        byte sprite_byte = vm->memory.mem[vm->I + row];
         for(int col = 0; col < 8; col++){
             byte *screen_pixel = &(vm->display[(y + row) % CHIP8_DISPLAY_HEIGHT][(x + col) % CHIP8_DISPLAY_WIDGHT]);
             if (!(sprite_byte & (0x80u >> col)))
                 continue;
 
             if (*screen_pixel > 0)
-                vm->V[0xF] = 1;
+                vm->V[0xFu] = 1;
                 
             *screen_pixel ^= 1;
         }
@@ -274,7 +274,7 @@ void execute_jsr(
     if (decoded_opcode->optype !=  JSR)
         execute_err(decoded_opcode);
 
-    if (vm->sp > 16){
+    if (vm->sp >= 16){
         fprintf(stderr, "ERROR: Stack pointer overflow..\n");
         exit(1);
     } 
@@ -333,7 +333,7 @@ void execute_key(
     if (decoded_opcode->optype !=  KEY)
         execute_err(decoded_opcode);
 
-    if (!chip8_press_key(vm))
+    if (!chip8_is_key_down(vm))
         vm->pc -= 2;
 }
 
@@ -374,7 +374,7 @@ void execute_str(
         execute_err(decoded_opcode);
 
     for (int i = 0; i <= decoded_opcode->vx; i++)
-        vm->memory.write(&vm->memory, vm->I + i, vm->V[i]);
+        vm->memory.mem[vm->I + i] = vm->V[i];
 }
 
 void execute_ldr(
@@ -388,7 +388,7 @@ void execute_ldr(
         execute_err(decoded_opcode);
 
     for(int i = 0; i <= decoded_opcode->vx; i++)
-        vm->V[i] = vm->memory.read(&vm->memory, vm->I + i);
+        vm->V[i] = vm->memory.mem[vm->I + i];
 }
 
 void execute_mvi(
@@ -415,7 +415,7 @@ void execute_add_rr(
         execute_err(decoded_opcode);
 
     uint16_t sum = vm->V[decoded_opcode->vx] + vm->V[decoded_opcode->vy];
-    vm->V[0xF] = (sum > 255u);
+    vm->V[0xFu] = (sum > 255u);
     vm->V[decoded_opcode->vx] = sum & 0xFFu;
 }
 
@@ -429,11 +429,11 @@ void execute_sub_rr(
     if (decoded_opcode->optype !=  SUB_RR)
         execute_err(decoded_opcode);
 
-    vm->V[0xF] = (
+    vm->V[0xFu] = (
         vm->V[decoded_opcode->vx] > 
         vm->V[decoded_opcode->vy]
     );
-    vm->V[decoded_opcode->vx] = vm->V[decoded_opcode->vx] - vm->V[decoded_opcode->vy];
+    vm->V[decoded_opcode->vx] -= vm->V[decoded_opcode->vy];
 }
 
 void execute_rsb(

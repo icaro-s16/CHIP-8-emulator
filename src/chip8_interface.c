@@ -306,78 +306,42 @@ static void chip8_draw_memory_area(
             
 }
 
-int chip8_press_key(
+#define X(key_name, key_value)      \
+    if (IsKeyDown(key_name)){       \
+        vm->keys[key_value] = 1;    \
+        return 1;                   \
+    }
+
+int chip8_is_key_down(
     Chip8VM* vm
 ){
-    
-    
-    if (IsKeyPressed(KEY_KP_1)){
-        vm->keys[0] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_KP_2)){
-        vm->keys[1] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_KP_3)){
-        vm->keys[2] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_KP_4)){
-        vm->keys[3] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_Q)){
-        vm->keys[4] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_W)){
-        vm->keys[5] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_E)){
-        vm->keys[6] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_R)){
-        vm->keys[7] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_A)){
-        vm->keys[8] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_S)){
-        vm->keys[9] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_D)){
-        vm->keys[10] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_F)){
-        vm->keys[11] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_Z)){
-        vm->keys[12] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_X)){
-        vm->keys[13] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_C)){
-        vm->keys[14] = 1;
-        return 1;
-    }
-    else if (IsKeyDown(KEY_V)){
-        vm->keys[15] = 1;
-        return 1;
-    }
+    CHIP8_KEYS_TABLE(X)
     return 0;
 }
 
+#undef X
+
+
+void chip8_update_key_map(
+    Chip8VM* vm
+){
+    #define X(key_name, key_value)      \
+        if( IsKeyDown(key_name) )       \
+            vm->keys[key_value] = 1;    
+
+    CHIP8_KEYS_TABLE(X)
+
+    #undef X 
+
+    #define X(key_name, key_value)      \
+        if( IsKeyUp(key_name) )         \
+            vm->keys[key_value] = 0;
+    
+    CHIP8_KEYS_TABLE(X)
+
+    #undef X
+
+}
 
 void chip8_update_display(
     Chip8VM* vm

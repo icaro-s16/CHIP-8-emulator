@@ -255,20 +255,20 @@ void decode_raw(const addr opcode, DecodedOpcode* decoded_opcode){
 static inline void decoder_set_address_op(const addr opcode, DecodedOpcode* decoded_opcode){
     
     assert(decoded_opcode != NULL);
-    decoded_opcode->address = opcode & 0x0FFF;
+    decoded_opcode->address = opcode & 0x0FFFu;
 }
 
 static inline void decoder_set_register_op(const addr opcode, DecodedOpcode* decoded_opcode){
     
     assert(decoded_opcode != NULL);
-    decoded_opcode->vx = (opcode & 0x0F00) >> 8;
-    decoded_opcode->constant = opcode & 0x00FF;
+    decoded_opcode->vx = (opcode & 0x0F00u) >> 8;
+    decoded_opcode->constant = opcode & 0x00FFu;
 }
 
 static inline void decoder_set_doubleregister_op(const addr opcode, DecodedOpcode* decoded_opcode){
     
     assert(decoded_opcode != NULL);
-    decoded_opcode->vx = (opcode & 0x0F00) >> 8;
-    decoded_opcode->vy = (opcode & 0x00F0) >> 4;
-    decoded_opcode->constant = opcode & 0x000F;
+    decoded_opcode->vx = (opcode & 0x0F00u) >> 8;
+    decoded_opcode->vy = (opcode & 0x00F0u) >> 4;
+    decoded_opcode->constant = opcode & 0x000Fu;
 }

@@ -8,13 +8,13 @@ static inline ulong sec_to_nsec(
 }
 
 static void chip8_sync_execution(
-    const struct timespec last, 
-    const struct timespec now, 
+    const struct timespec last_time, 
+    const struct timespec cur_time, 
     const ulong time_per_op
 ){
     ulong delta = (
-        (now.tv_sec * sec_to_nsec(1) + now.tv_nsec) -
-        (last.tv_sec * sec_to_nsec(1) + last.tv_nsec)
+        (cur_time.tv_sec * sec_to_nsec(1) + cur_time.tv_nsec) -
+        (last_time.tv_sec * sec_to_nsec(1) + last_time.tv_nsec)
     );
 
     if (delta >= time_per_op)
@@ -27,6 +27,27 @@ static void chip8_sync_execution(
 
     nanosleep(&delta_sleep, NULL);
     
+}
+
+static int chip8_sync_timer_update(
+    struct timespec* last_time
+){
+    const ulong timer_update_per_sec = 60 / sec_to_nsec(1);
+    static ulong delta = 0; 
+    struct timespec cur_time = {0};
+    clock_gettime(CLOCK_MONOTONIC, &cur_time);
+    
+    delta += (
+        (cur_time.tv_sec * sec_to_nsec(1) + cur_time.tv_nsec) -
+        (last_time->tv_sec * sec_to_nsec(1) + last_time->tv_nsec)
+    );
+
+    if (delta >= timer_update_per_sec){
+        delta = 0;
+        return 1;
+    }
+
+    return 0;
 }
 
 void chip8_emulator_run(
@@ -45,20 +66,20 @@ void chip8_emulator_run(
     chip8_construct_display();
 
     size_t time_per_op = sec_to_nsec(1) / op_per_sec; 
-    struct timespec last = {0};
-    clock_gettime(CLOCK_MONOTONIC, &last);
+    struct timespec last_time = {0};
+    clock_gettime(CLOCK_MONOTONIC, &last_time);
     
     while(!WindowShouldClose()){
-        chip8_emulate_cycle(&vm);
+        chip8_emulate_cycle(&vm, &last_time);
         
-        struct timespec now = {0};
-        clock_gettime(CLOCK_MONOTONIC, &now);
+        struct timespec cur_time = {0};
+        clock_gettime(CLOCK_MONOTONIC, &cur_time);
         chip8_sync_execution(
-            last,
-            now,
+            last_time,
+            cur_time,
             time_per_op
         );
-        last = now;
+        last_time = cur_time;
     }
 
     chip8_destroy_display();
@@ -82,8 +103,8 @@ static char** chip8_dissasembler_construct(
         pc += 2, offset ++
     ){
         addr opcode = (
-            (mem->read(mem, pc ) << 8) | 
-            mem->read(mem, pc + 1)
+            (mem->mem[pc] << 8) | 
+            mem->mem[pc + 1]
         );
 
         DecodedOpcode decoded_opcode = {0};
@@ -117,30 +138,34 @@ static void chip8_dissasembler_destroy(
 }
 
 static void chip8_emulate_cycle(
-    Chip8VM* vm
+    Chip8VM* vm,
+    struct timespec* last_time
 ){
     assert(vm != NULL);
     
     addr opcode = (
-        (vm->memory.read(&vm->memory, vm->pc) << 8) | 
-        vm->memory.read(&vm->memory, vm->pc + 1)
+        (vm->memory.mem[vm->pc] << 8) | 
+        vm->memory.mem[vm->pc + 1]
     );
     
     vm->pc += 2;
 
     DecodedOpcode decoded_opcode = {0};
     decoded_opcode.optype = chip8_get_optype(opcode);
-    chip8_set_executer(&decoded_opcode);
+    chip8_set_executor(&decoded_opcode);
     void (*opcode_decoder)(const addr, DecodedOpcode*) = chip8_get_decoder(&decoded_opcode); 
     opcode_decoder(opcode, &decoded_opcode);
     decoded_opcode.execute(vm, &decoded_opcode);
 
     chip8_update_display(vm);
+    chip8_update_key_map(vm);
 
     // TODO: Implement sound
-
-    if (vm->delay_timer > 0) vm->delay_timer -= 1;
-    if (vm->sound_timer > 0) vm->sound_timer -= 1;
+    // DONE: Timer update sync
+    if (chip8_sync_timer_update(last_time)){
+        if (vm->delay_timer > 0) vm->delay_timer -= 1;
+        if (vm->sound_timer > 0) vm->sound_timer -= 1;
+    }
 
     if (vm->pc >= MEM_MAX_SIZE){
         fprintf(stderr, "ERROR: Program counter exceeds available memory limits...\n");

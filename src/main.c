@@ -6,7 +6,7 @@ int main(
 ){
     ulong op_per_sec = 700;
 
-    if (argc > 3){
+    if (argc > 3 || argc < 2){
         fprintf(
             stderr, 
             "ERROR: Incorrect usage. The correct usage is \"./<bin> <rom path> <operation per sec>\"..\n"
@@ -15,7 +15,7 @@ int main(
     }
 
     if (argc < 3)
-        printf("INFO: The emulator will use 700 operation per sec, you can change it passing the desired value after \"./<bin> <rom path> <operation per sec>\"..\n");
+        printf("INFO: The emulator will use 700 operation per sec, you can change it passing the desired value \"./<bin> <rom path> <operation per sec>\"..\n");
     else if (
         sscanf(argv[2], "%lu", &op_per_sec) != 1
     ){
@@ -28,7 +28,7 @@ int main(
     }
 
     chip8_emulator_run(
-        "/home/icaro_s/projects/C_family/CHIP-8_emulator/assets/roms/test_opcode.ch8", 
+        "/home/icaro_s/projects/C_family/CHIP-8_emulator/assets/roms/3-corax+.ch8", 
         op_per_sec
     );
 

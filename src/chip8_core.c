@@ -1,12 +1,12 @@
 #include "chip8_core.h"
 
 
-#define X(optype, opcode, executor, decoder)                 \
-    if ( !(_opcode - ( _opcode & opcode )))                  \
+#define X(optype, opcode, executor, decoder)                \
+    if (!( _opcode - ( _opcode & opcode )))                 \
         return optype;
 
 OpType chip8_get_optype(const addr _opcode){
-    INSTRUCTION_TABLE(X)
+    CHIP8_INSTRUCTION_TABLE(X)
     return RAW;
 }
 
@@ -17,10 +17,10 @@ OpType chip8_get_optype(const addr _opcode){
         decoded_opcode->execute = executor;                 \
         break;
 
-void chip8_set_executer(DecodedOpcode* decoded_opcode){
+void chip8_set_executor(DecodedOpcode* decoded_opcode){
     switch (decoded_opcode->optype)
     {
-    INSTRUCTION_TABLE(X)
+    CHIP8_INSTRUCTION_TABLE(X)
     default:
         break;
     }
@@ -35,7 +35,7 @@ void chip8_set_executer(DecodedOpcode* decoded_opcode){
 void* chip8_get_decoder(DecodedOpcode* decoded_opcode){
     switch (decoded_opcode->optype)
     {
-        INSTRUCTION_TABLE(X)
+        CHIP8_INSTRUCTION_TABLE(X)
         default:
             return decode_raw;
     }

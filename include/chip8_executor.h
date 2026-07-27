@@ -4,7 +4,7 @@
 #include "chip8_core.h"
 
 
-int chip8_press_key(Chip8VM* vm);
+int chip8_is_key_down(Chip8VM* vm);
 
 void execute_mov_rr(Chip8VM* vm, const DecodedOpcode* decoded_opcode);
 

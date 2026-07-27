@@ -15,48 +15,48 @@ typedef uint16_t addr;
 Instruction type | Opcode | Executor | Decoder
 
 */
-#define INSTRUCTION_TABLE(X)                                        \
-    X(CLS, 0x00E0, execute_cls, decode_cls)                         \
-    X(RTS, 0x00EE, execute_rts, decode_rts)                         \
-    X(CALL, 0x0FFF, execute_call, decode_call)                      \
-    X(JMP, 0x1FFF, execute_jmp, decode_jmp)                         \
-    X(JSR, 0x2FFF, execute_jsr, decode_jsr)                         \
-    X(SKEQ_RC, 0x3FFF, execute_skeq_rc, decode_skeq_rc)             \
-    X(SKNE_RC, 0x4FFF, execute_skne_rc, decode_skne_rc)             \
-    X(SKEQ_RR, 0x5FF0, execute_skeq_rr, decode_skeq_rr)             \
-    X(MOV_RC, 0x6FFF, execute_mov_rc, decode_mov_rc)                \
-    X(ADD_RC, 0x7FFF, execute_add_rc, decode_add_rc)                \
-    X(MOV_RR, 0x8FF0, execute_mov_rr, decode_mov_rr)                \
-    X(OR_RR, 0x8FF1, execute_or_rr, decode_or_rr)                   \
-    X(AND_RR, 0x8FF2, execute_and_rr, decode_and_rr)                \
-    X(XOR_RR, 0x8FF3, execute_xor_rr, decode_xor_rr)                \
-    X(ADD_RR, 0x8FF4, execute_add_rr, decode_add_rr)                \
-    X(SUB_RR, 0x8FF5, execute_sub_rr, decode_sub_rr)                \
-    X(SHR, 0x8FF6, execute_shr, decode_shr)                         \
-    X(RSB, 0x8FF7, execute_rsb, decode_rsb)                         \
-    X(SHL, 0x8FFE, execute_shl, decode_shl)                         \
-    X(SKNE_RR, 0x9FF0, execute_skne_rr, decode_skne_rr)             \
-    X(MVI, 0xAFFF, execute_mvi, decode_mvi)                         \
-    X(JMI, 0xBFFF, execute_jmi, decode_jmi)                         \
-    X(RAND, 0xCFFF, execute_rand, decode_rand)                      \
-    X(SPRITE, 0xDFFF, execute_sprite, decode_sprite)                \
-    X(SKPR, 0xEF9E, execute_skpr, decode_skpr)                      \
-    X(SKUP, 0xEFA1, execute_skup, decode_skup)                      \
-    X(GDELAY, 0xFF07, execute_gdelay, decode_gdelay)                \
-    X(KEY, 0xFF0A, execute_key, decode_key)                         \
-    X(SDELAY, 0xFF15, execute_sdelay, decode_sdelay)                \
-    X(SSOUND, 0xFF18, execute_ssound, decode_ssound)                \
-    X(ADDI, 0xFF1E, execute_addi, decode_addi)                      \
-    X(FONT, 0xFF29, execute_font, decode_font)                      \
-    X(BCD, 0xFF33, execute_bcd, decode_bcd)                         \
-    X(STR, 0xFF55, execute_str, decode_str)                         \
-    X(LDR, 0xFF65, execute_ldr, decode_ldr)                         
+#define CHIP8_INSTRUCTION_TABLE(X)                                   \
+    X(CLS, 0x00E0u, execute_cls, decode_cls)                         \
+    X(RTS, 0x00EEu, execute_rts, decode_rts)                         \
+    X(CALL, 0x0FFFu, execute_call, decode_call)                      \
+    X(JMP, 0x1FFFu, execute_jmp, decode_jmp)                         \
+    X(JSR, 0x2FFFu, execute_jsr, decode_jsr)                         \
+    X(SKEQ_RC, 0x3FFFu, execute_skeq_rc, decode_skeq_rc)             \
+    X(SKNE_RC, 0x4FFFu, execute_skne_rc, decode_skne_rc)             \
+    X(SKEQ_RR, 0x5FF0u, execute_skeq_rr, decode_skeq_rr)             \
+    X(MOV_RC, 0x6FFFu, execute_mov_rc, decode_mov_rc)                \
+    X(ADD_RC, 0x7FFFu, execute_add_rc, decode_add_rc)                \
+    X(MOV_RR, 0x8FF0u, execute_mov_rr, decode_mov_rr)                \
+    X(OR_RR, 0x8FF1u, execute_or_rr, decode_or_rr)                   \
+    X(AND_RR, 0x8FF2u, execute_and_rr, decode_and_rr)                \
+    X(XOR_RR, 0x8FF3u, execute_xor_rr, decode_xor_rr)                \
+    X(ADD_RR, 0x8FF4u, execute_add_rr, decode_add_rr)                \
+    X(SUB_RR, 0x8FF5u, execute_sub_rr, decode_sub_rr)                \
+    X(SHR, 0x8FF6u, execute_shr, decode_shr)                         \
+    X(RSB, 0x8FF7u, execute_rsb, decode_rsb)                         \
+    X(SHL, 0x8FFEu, execute_shl, decode_shl)                         \
+    X(SKNE_RR, 0x9FF0u, execute_skne_rr, decode_skne_rr)             \
+    X(MVI, 0xAFFFu, execute_mvi, decode_mvi)                         \
+    X(JMI, 0xBFFFu, execute_jmi, decode_jmi)                         \
+    X(RAND, 0xCFFFu, execute_rand, decode_rand)                      \
+    X(SPRITE, 0xDFFFu, execute_sprite, decode_sprite)                \
+    X(SKPR, 0xEF9Eu, execute_skpr, decode_skpr)                      \
+    X(SKUP, 0xEFA1u, execute_skup, decode_skup)                      \
+    X(GDELAY, 0xFF07u, execute_gdelay, decode_gdelay)                \
+    X(KEY, 0xFF0Au, execute_key, decode_key)                         \
+    X(SDELAY, 0xFF15u, execute_sdelay, decode_sdelay)                \
+    X(SSOUND, 0xFF18u, execute_ssound, decode_ssound)                \
+    X(ADDI, 0xFF1Eu, execute_addi, decode_addi)                      \
+    X(FONT, 0xFF29u, execute_font, decode_font)                      \
+    X(BCD, 0xFF33u, execute_bcd, decode_bcd)                         \
+    X(STR, 0xFF55u, execute_str, decode_str)                         \
+    X(LDR, 0xFF65u, execute_ldr, decode_ldr)                         
 
 #define X(optype, opcode, executor, decoder) optype, 
 
 typedef enum OpType OpType;
 enum OpType{
-    INSTRUCTION_TABLE(X) 
+    CHIP8_INSTRUCTION_TABLE(X) 
     RAW
 };
 
@@ -95,9 +95,9 @@ struct DecodedOpcode{
     void (*execute)(Chip8VM*, const DecodedOpcode*);
 };
 
-OpType chip8_get_optype(const addr opcode);
+OpType chip8_get_optype(const addr _opcode);
 
-void chip8_set_executer(DecodedOpcode* decoded_opcode);
+void chip8_set_executor(DecodedOpcode* decoded_opcode);
 
 void* chip8_get_decoder(DecodedOpcode* decoded_opcode);
 
