@@ -23,11 +23,6 @@
 
 static Font font;
 
-static enum{ 
-    DISPLAY_WIDHT  = 1280,
-    DISPLAY_HEIGHT = 720
-};
-
 static void chip8_draw_hardware_components(
     const Vector2 pos, 
     const char* name, 

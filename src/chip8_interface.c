@@ -1,5 +1,12 @@
 #include "chip8_interface.h"
 
+// Private constants
+
+enum{ 
+    DISPLAY_WIDHT  = 1280,
+    DISPLAY_HEIGHT = 720
+};
+
 // TODO: Refac this file
 
 static void chip8_draw_hardware_components(
