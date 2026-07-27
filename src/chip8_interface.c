@@ -7,6 +7,8 @@ enum{
     DISPLAY_HEIGHT = 720
 };
 
+Font font;
+
 // TODO: Refac this file
 
 static void chip8_draw_hardware_components(
