@@ -51,6 +51,26 @@ int main(){
         CU_cleanup_registry();
         return CU_get_error();
     }
+    if (CU_add_test(instructionspSuite, "CHIP-8 mov rr", test_mov_rr) == NULL){
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+    if (CU_add_test(instructionspSuite, "CHIP-8 ldr", test_ldr) == NULL){
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+    if (CU_add_test(instructionspSuite, "CHIP-8 str", test_str) == NULL){
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+    if (CU_add_test(instructionspSuite, "CHIP-8 bcd", test_bcd) == NULL){
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+    if (CU_add_test(instructionspSuite, "CHIP-8 addi", test_addi) == NULL){
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
 
     CU_basic_run_tests();
     CU_cleanup_registry();

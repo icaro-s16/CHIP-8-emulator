@@ -8,14 +8,19 @@ static inline uint32_t sec_to_nsec(
 }
 
 static void chip8_sync_execution(
-    const struct timespec last_time, 
-    const struct timespec cur_time, 
+    struct timespec* last_time, 
     const uint32_t time_per_op
 ){
+
+    struct timespec cur_time = {0};
+    clock_gettime(CLOCK_MONOTONIC, &cur_time);
+
     uint32_t delta = (
         (cur_time.tv_sec * sec_to_nsec(1) + cur_time.tv_nsec) -
-        (last_time.tv_sec * sec_to_nsec(1) + last_time.tv_nsec)
+        (last_time->tv_sec * sec_to_nsec(1) + last_time->tv_nsec)
     );
+    
+    *last_time = cur_time;
 
     if (delta >= time_per_op)
         return;
@@ -71,15 +76,7 @@ void chip8_emulator_run(
     
     while(!WindowShouldClose()){
         chip8_emulate_cycle(&vm, &last_time);
-        
-        struct timespec cur_time = {0};
-        clock_gettime(CLOCK_MONOTONIC, &cur_time);
-        chip8_sync_execution(
-            last_time,
-            cur_time,
-            time_per_op
-        );
-        last_time = cur_time;
+        chip8_sync_execution(&last_time, op_per_sec);
     }
 
     chip8_destroy_display();
@@ -90,8 +87,6 @@ static char** chip8_dissasembler_construct(
     Memory* mem
 ){  
     assert(mem != NULL);
-
-    printf("ASSEMBLY:\n");
 
     char **dissasembly = calloc(mem->rom_size/2, sizeof(char*));
     for(int i = 0; i < mem->rom_size/2; i++)

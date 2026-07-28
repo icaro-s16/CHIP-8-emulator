@@ -124,3 +124,106 @@ void test_mov_rr(){
     );
 
 }
+
+void test_ldr(){
+    Chip8VM vm = {0};
+    
+    vm.memory.mem[vm.I] = 10;
+    vm.memory.mem[vm.I + 1] = 20;
+    addr opcode = 0xF165;
+
+    DecodedOpcode decoded_opcode = {0};
+    decoded_opcode.optype = chip8_get_optype(opcode);
+    chip8_set_executor(&decoded_opcode);
+    void(*decoder)(const addr, DecodedOpcode*) = chip8_get_decoder(&decoded_opcode);
+    decoder(opcode, &decoded_opcode);
+
+    decoded_opcode.execute(&vm, &decoded_opcode);
+
+    CU_ASSERT_EQUAL(
+        vm.V[0],
+        vm.memory.mem[vm.I]
+    );
+
+    CU_ASSERT_EQUAL(
+        vm.V[1],
+        vm.memory.mem[vm.I + 1]
+    );
+}
+
+void test_str(){
+    Chip8VM vm = {0};
+    
+    vm.V[0] = 10;
+    vm.V[1] = 20;
+    addr opcode = 0xF155;
+
+    DecodedOpcode decoded_opcode = {0};
+    decoded_opcode.optype = chip8_get_optype(opcode);
+    chip8_set_executor(&decoded_opcode);
+    void(*decoder)(const addr, DecodedOpcode*) = chip8_get_decoder(&decoded_opcode);
+    decoder(opcode, &decoded_opcode);
+
+    decoded_opcode.execute(&vm, &decoded_opcode);
+
+    CU_ASSERT_EQUAL(
+        vm.V[0],
+        vm.memory.mem[vm.I]
+    );
+    
+    CU_ASSERT_EQUAL(
+        vm.V[1],
+        vm.memory.mem[vm.I + 1]
+    );
+}
+
+void test_bcd(){
+    Chip8VM vm = {0};
+    
+    vm.V[0] = 123;
+    addr opcode = 0xF033;
+
+    DecodedOpcode decoded_opcode = {0};
+    decoded_opcode.optype = chip8_get_optype(opcode);
+    chip8_set_executor(&decoded_opcode);
+    void(*decoder)(const addr, DecodedOpcode*) = chip8_get_decoder(&decoded_opcode);
+    decoder(opcode, &decoded_opcode);
+
+    decoded_opcode.execute(&vm, &decoded_opcode);
+
+    CU_ASSERT_EQUAL(
+        1,
+        vm.memory.mem[vm.I]
+    );
+    
+    CU_ASSERT_EQUAL(
+        2,
+        vm.memory.mem[vm.I + 1]
+    );
+
+    CU_ASSERT_EQUAL(
+        3,
+        vm.memory.mem[vm.I + 2]
+    );
+}
+
+void test_addi(){
+    Chip8VM vm = {0};
+    
+    vm.V[0] = 123;
+    addr opcode = 0xF01E;
+
+    DecodedOpcode decoded_opcode = {0};
+    decoded_opcode.optype = chip8_get_optype(opcode);
+    chip8_set_executor(&decoded_opcode);
+    void(*decoder)(const addr, DecodedOpcode*) = chip8_get_decoder(&decoded_opcode);
+    decoder(opcode, &decoded_opcode);
+
+    decoded_opcode.execute(&vm, &decoded_opcode);
+
+    CU_ASSERT_EQUAL(
+        123,
+        vm.I
+    );
+    
+}
