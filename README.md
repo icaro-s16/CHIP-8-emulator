@@ -4,6 +4,10 @@
 
 **My first emulator!** I am trying to organize my projects better and use unit tests to feel more confident when adding features to my code, so this is my first project with this level of organization.
 
+## Demo 
+
+![CHIP-8 emulator](https://github.com/icaro-s16/CHIP-8_emulator/CHIP-8_emulator/demo/demo.png)
+
 ## How to build it
 
 You just need to install CMake and GCC. After that, follow these instructions:
@@ -24,8 +28,8 @@ What is `<op per sec>`? This parameter controls how many instructions the emulat
 
 ## What I still want to do
 
-- [] Implement a keypad visualizer
-- [] Add debug options (breakpoints and pause execution)
+- [ ] Implement a keypad visualizer
+- [ ] Add debug options (breakpoints and pause execution)
 
 
 ## References 

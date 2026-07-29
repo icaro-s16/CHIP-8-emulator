@@ -7,7 +7,7 @@ int main(
 ){
     uint32_t op_per_sec = 700;
 
-    if (argc > 3){
+    if (argc > 3 || argc < 2){
         fprintf(
             stderr, 
             "ERROR: Incorrect usage. The correct usage is \"./<bin> <rom path> <operation per sec>\"..\n"
