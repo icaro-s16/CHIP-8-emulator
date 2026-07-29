@@ -27,6 +27,11 @@ To run the emulator, use the following base command:
 
 What is `<op per sec>`? This parameter controls how many instructions the emulator will execute per second. If you leave this field blank, the default configuration will be used (700 operations per second).
 
+## How to get the assembly of the ROM
+
+So you want to see the instructions of your ROM and the mnemonics that I use? I got you. They are printed out every run, but you can redirect the output to a file using standard bash syntax:
+`./chip8Emulator <bin> > src.txt`
+
 ## What I still want to do
 
 - [ ] Implement a keypad visualizer
