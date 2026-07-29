@@ -28,7 +28,7 @@ int main(
         exit(1);
     }
 
-    if (op_per_sec > 10000000 || op_per_sec < 1){
+    if (op_per_sec < 1){
         fprintf(
             stderr, 
             "ERROR: %lu operations per second may cause unexpected behavior..\n", 

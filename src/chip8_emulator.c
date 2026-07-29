@@ -1,23 +1,16 @@
 #include "chip8_emulator.h"
 
 
-static inline uint32_t sec_to_nsec(
-    uint32_t sec
-){
-    return sec * 1000000000;
-}
 
 static int chip8_sync_execution(
-    struct timespec* last_time, 
-    const uint32_t time_per_op
+    double *last_time, 
+    const double time_per_op
 ){
-    static uint32_t delta = 0;
-    struct timespec cur_time = {0};
-    clock_gettime(CLOCK_MONOTONIC, &cur_time);
-
+    static double delta = 0;
+    double cur_time = GetTime();
     delta += (
-        (cur_time.tv_sec * sec_to_nsec(1) + cur_time.tv_nsec) -
-        (last_time->tv_sec * sec_to_nsec(1) + last_time->tv_nsec)
+        cur_time -
+        *last_time
     );
     
     *last_time = cur_time;
@@ -31,18 +24,17 @@ static int chip8_sync_execution(
 }
 
 static int chip8_sync_timer_update(
-    struct timespec* last_time
+    double *last_time
 ){
-    const uint32_t timer_update_per_sec = 60 / sec_to_nsec(1);
-    static uint32_t delta = 0; 
-    struct timespec cur_time = {0};
-    clock_gettime(CLOCK_MONOTONIC, &cur_time);
-    
+    const double timer_update_per_sec = 1 / 60.0 ;
+    static double delta = 0; 
+    double cur_time = GetTime();
     delta += (
-        (cur_time.tv_sec * sec_to_nsec(1) + cur_time.tv_nsec) -
-        (last_time->tv_sec * sec_to_nsec(1) + last_time->tv_nsec)
+        cur_time -
+        *last_time
     );
 
+    *last_time = cur_time;
     if (delta >= timer_update_per_sec){
         delta = delta - timer_update_per_sec;
         return 1;
@@ -65,21 +57,20 @@ void chip8_emulator_run(
     
     chip8_construct_display();
 
-    size_t time_per_op = sec_to_nsec(1) / op_per_sec; 
-    struct timespec last_time = {0};
-    clock_gettime(CLOCK_MONOTONIC, &last_time);
-    
+    double time_per_op = 1.0 / op_per_sec; 
+    double cpu_last_time, timer_last_time = GetTime(), GetTime();
+
     while(!WindowShouldClose()){
         
         chip8_update_keys_map(&vm);
-        if (chip8_sync_execution(&last_time, time_per_op)){
-            chip8_emulate_cycle(&vm, &last_time);
+        if (chip8_sync_execution(&cpu_last_time, time_per_op)){
+            chip8_emulate_cycle(&vm);
             chip8_update_display(&vm);
         }
 
         // DONE: Implement sound
         // DONE: Timer update sync
-        if (chip8_sync_timer_update(&last_time)){
+        if (chip8_sync_timer_update(&timer_last_time)){
             if (vm.delay_timer > 0) vm.delay_timer -= 1;
             if (vm.sound_timer > 0) {
                 chip8_play_beep();
@@ -140,8 +131,7 @@ static void chip8_dissasembler_destroy(
 }
 
 static void chip8_emulate_cycle(
-    Chip8VM* vm,
-    struct timespec* last_time
+    Chip8VM* vm
 ){
     assert(vm != NULL);
     
