@@ -1,6 +1,6 @@
 #include "chip8_memory.h"
 
-static void chip8_load_rom(
+static void load_rom(
     Memory* mem, 
     const char* rom_name
 ){
@@ -62,7 +62,7 @@ Memory chip8_memory_construct(
     for(int i = FONTSET_INITIAL_OFFSET; i < sizeof(fontset); i++)
         mem.mem[i] = fontset[i - FONTSET_INITIAL_OFFSET];
 
-    chip8_load_rom(&mem, rom_name);
+    load_rom(&mem, rom_name);
 
     
     return mem;

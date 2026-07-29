@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -51,7 +52,7 @@ Instruction type | Opcode | Executor | Decoder
     X(BCD, 0xFF33u, execute_bcd, decode_bcd)                         \
     X(STR, 0xFF55u, execute_str, decode_str)                         \
     X(LDR, 0xFF65u, execute_ldr, decode_ldr)                         
-
+    
 #define X(optype, opcode, executor, decoder) optype, 
 
 typedef enum OpType OpType;
@@ -74,7 +75,7 @@ struct Chip8VM{
     addr pc;
     byte sp;
     byte delay_timer;
-    byte sound_timer;     
+    byte sound_timer;    
 };
 
 typedef struct DecodedOpcode DecodedOpcode;

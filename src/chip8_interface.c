@@ -9,8 +9,32 @@ enum{
 
 Font font;
 
+Sound beep;
 
 // DONE: Refac this file
+
+#define X(key_name, key_val)    \
+    if (IsKeyDown(key_name))    \
+        vm->keys[key_val] = 1;  \
+    else if (IsKeyUp(key_name)) \
+        vm->keys[key_val] = 0;
+
+void chip8_update_keys_map(Chip8VM* vm){
+    CHIP8_KEYS_TABLE(X)
+}
+
+#undef X
+
+int chip8_is_key_down(Chip8VM* vm){
+    for (int i = 0; i < KEYS_SIZE ; i++)
+        if(vm->keys[i])
+            return 1;
+    return 0;
+}
+
+void chip8_play_beep(){
+    PlaySound(beep);
+}
 
 static void chip8_draw_hardware_component(
     const Vector2 pos, 
@@ -325,18 +349,6 @@ static void chip8_draw_memory_area(
             
 }
 
-#define X(key_name, key_value)      \
-    if (IsKeyPressed(key_name)){    \
-        vm->keys[key_value] = 1;    \
-        return 1;                   \
-    }
-
-int chip8_is_key_down(
-    Chip8VM* vm
-){
-    CHIP8_KEYS_TABLE(X)
-    return 0;
-}
 
 void chip8_update_display(
     Chip8VM* vm
@@ -360,11 +372,16 @@ void chip8_update_display(
 void chip8_construct_display(){
     SetTraceLogLevel(LOG_ERROR); 
     InitWindow(DISPLAY_WIDHT, DISPLAY_HEIGHT, "CHIP-8 emulator");
+    InitAudioDevice();
     font = LoadFont("assets/fonts/liner BMP14.TTF");
+    beep = LoadSound("assets/sounds/beep.wav");
     SetTargetFPS(60);
 }
 
 void chip8_destroy_display(){
+    UnloadFont(font);
+    UnloadSound(beep);
+    CloseAudioDevice();
     CloseWindow();
 }
 

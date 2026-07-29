@@ -71,21 +71,20 @@ void chip8_emulator_run(
     
     while(!WindowShouldClose()){
         
-        // TODO: Implement a keyboard buffer
-
-        chip8_update_key_map_down(&vm);
+        chip8_update_keys_map(&vm);
         if (chip8_sync_execution(&last_time, time_per_op)){
             chip8_emulate_cycle(&vm, &last_time);
-            chip8_update_key_map_up(&vm);
+            chip8_update_display(&vm);
         }
-        
-        chip8_update_display(&vm);
 
-        // TODO: Implement sound
+        // DONE: Implement sound
         // DONE: Timer update sync
         if (chip8_sync_timer_update(&last_time)){
             if (vm.delay_timer > 0) vm.delay_timer -= 1;
-            if (vm.sound_timer > 0) vm.sound_timer -= 1;
+            if (vm.sound_timer > 0) {
+                chip8_play_beep();
+                vm.sound_timer -= 1;
+            }
         }
     }
 

@@ -5,7 +5,7 @@ int main(
     int argc, 
     char** argv
 ){
-    uint32_t op_per_sec = 10000;
+    uint32_t op_per_sec = 700;
 
     if (argc > 3){
         fprintf(
@@ -39,7 +39,7 @@ int main(
 
 
     chip8_emulator_run(
-        "/home/icaro_s/projects/C_family/CHIP-8_emulator/assets/roms/6-keypad.ch8", 
+        argv[1], 
         op_per_sec
     );
 

@@ -47,7 +47,6 @@ set(SRC_FILES
     src/chip8_interface.c
     src/chip8_memory.c
     src/chip8_core.c
-    src/chip8_keypad.c
 )
 
 set(LIB_NAME "chip8Lib")
@@ -59,8 +58,9 @@ target_include_directories(${LIB_NAME} PUBLIC include)
 target_link_libraries(${LIB_NAME} PUBLIC raylib)
 
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 
 if (NOT CHIP8_TEST)
     add_executable(${PROJECT_NAME} src/main.c)

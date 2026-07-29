@@ -7,6 +7,7 @@
 
 
 enum {
+    BUFFER_MAX_SIZE         = 50,
     CHIP8_DISPLAY_WIDTH     = 64,
     CHIP8_DISPLAY_HEIGHT    = 32,
     KEYS_SIZE               = 16,
@@ -26,7 +27,7 @@ struct Memory{
     size_t rom_size;
 };
 
-static void chip8_load_rom(Memory* mem, const char* rom_name);
+static void load_rom(Memory* mem, const char* rom_name);
 
 Memory chip8_memory_construct(const char* rom_name);
 
