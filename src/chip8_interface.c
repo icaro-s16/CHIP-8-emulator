@@ -9,6 +9,7 @@ enum{
 
 Font font;
 
+
 // DONE: Refac this file
 
 static void chip8_draw_hardware_component(
@@ -337,28 +338,6 @@ int chip8_is_key_down(
     return 0;
 }
 
-#undef X
-
-#define X(key_name, key_value)          \
-    if( IsKeyDown(key_name) )           \
-        vm->keys[key_value] = 1;    
-        
-void chip8_update_key_map_down(Chip8VM* vm){
-    CHIP8_KEYS_TABLE(X)
-}
-
-#undef X 
-
-#define X(key_name, key_value)            \
-    if( IsKeyUp(key_name) )               \
-        vm->keys[key_value] = 0;
-
-void chip8_update_key_map_up(Chip8VM* vm){
-    CHIP8_KEYS_TABLE(X)
-}
-
-#undef X
-
 void chip8_update_display(
     Chip8VM* vm
 ){
@@ -388,3 +367,5 @@ void chip8_construct_display(){
 void chip8_destroy_display(){
     CloseWindow();
 }
+
+

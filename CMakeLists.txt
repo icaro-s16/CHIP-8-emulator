@@ -47,6 +47,7 @@ set(SRC_FILES
     src/chip8_interface.c
     src/chip8_memory.c
     src/chip8_core.c
+    src/chip8_keypad.c
 )
 
 set(LIB_NAME "chip8Lib")
