@@ -78,8 +78,9 @@ void execute_shr(
     if (decoded_opcode->optype !=  SHR)
         execute_err(decoded_opcode);
 
-    vm->V[0xFu] = vm->V[decoded_opcode->vx] & 0x1u;
+    uint16_t vx = vm->V[decoded_opcode->vx];
     vm->V[decoded_opcode->vx] >>= 1;
+    vm->V[0xFu] = vx & 0x1u;
 }
 
 void execute_shl(
@@ -92,8 +93,9 @@ void execute_shl(
     if (decoded_opcode->optype !=  SHL)
         execute_err(decoded_opcode);
 
-    vm->V[0xFu] = vm->V[decoded_opcode->vx] & 0x80u;
+    uint16_t vx = vm->V[decoded_opcode->vx];
     vm->V[decoded_opcode->vx] <<= 1;
+    vm->V[0xFu] = (vx & 0x80u) >> 7;
 }
 
 void execute_call(
@@ -415,8 +417,8 @@ void execute_add_rr(
         execute_err(decoded_opcode);
 
     uint16_t sum = vm->V[decoded_opcode->vx] + vm->V[decoded_opcode->vy];
-    vm->V[0xFu] = (sum > 255u);
     vm->V[decoded_opcode->vx] = sum & 0xFFu;
+    vm->V[0xFu] = (sum > 255u);
 }
 
 void execute_sub_rr(
@@ -428,12 +430,13 @@ void execute_sub_rr(
 
     if (decoded_opcode->optype !=  SUB_RR)
         execute_err(decoded_opcode);
-
-    vm->V[0xFu] = (
-        vm->V[decoded_opcode->vx] > 
-        vm->V[decoded_opcode->vy]
-    );
+    uint8_t vx = vm->V[decoded_opcode->vx]; 
+    uint8_t vy = vm->V[decoded_opcode->vy];
     vm->V[decoded_opcode->vx] -= vm->V[decoded_opcode->vy];
+    vm->V[0xFu] = (
+        vx >= 
+        vy
+    );
 }
 
 void execute_rsb(
@@ -445,12 +448,13 @@ void execute_rsb(
 
     if (decoded_opcode->optype !=  RSB)
         execute_err(decoded_opcode);
-
-    vm->V[0xF] = (
-        vm->V[decoded_opcode->vy] > 
-        vm->V[decoded_opcode->vx]
-    );
+    uint8_t vx = vm->V[decoded_opcode->vx]; 
+    uint8_t vy = vm->V[decoded_opcode->vy];
     vm->V[decoded_opcode->vx] = vm->V[decoded_opcode->vy] - vm->V[decoded_opcode->vx];
+    vm->V[0xF] = (
+        vy >= 
+        vx
+    );
 }
 
 void execute_rand(

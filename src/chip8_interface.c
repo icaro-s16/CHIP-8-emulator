@@ -139,7 +139,7 @@ static void chip8_draw_hardware_components_area(
     const int stack_size = sizeof(vm->stack)/sizeof(vm->stack[0]);
     int stack_offset = (vm->sp >= stack_size/2)? stack_size/2 : 0;
 
-    for(int i = 0; i < stack_size/2 ; i ++){
+    for(int i = 0; i < stack_size; i ++){
         
         chip8_draw_hardware_component(
             (Vector2){hardware_components_box.x + text_x,
@@ -201,7 +201,7 @@ static void chip8_draw_hardware_components_area(
         }
 
         
-        if (i >= 8){
+        if (i >= stack_size/2){
             chip8_draw_hardware_component(
                 (Vector2){hardware_components_box.x + text_widght + text_x,
                 hardware_components_box.y + i * text_height + text_y},
@@ -325,7 +325,7 @@ static void chip8_draw_memory_area(
 }
 
 #define X(key_name, key_value)      \
-    if (IsKeyDown(key_name)){       \
+    if (IsKeyPressed(key_name)){    \
         vm->keys[key_value] = 1;    \
         return 1;                   \
     }
@@ -339,27 +339,25 @@ int chip8_is_key_down(
 
 #undef X
 
-
-void chip8_update_key_map(
-    Chip8VM* vm
-){
-    #define X(key_name, key_value)      \
-        if( IsKeyDown(key_name) )       \
-            vm->keys[key_value] = 1;    
-
+#define X(key_name, key_value)          \
+    if( IsKeyDown(key_name) )           \
+        vm->keys[key_value] = 1;    
+        
+void chip8_update_key_map_down(Chip8VM* vm){
     CHIP8_KEYS_TABLE(X)
-
-    #undef X 
-
-    #define X(key_name, key_value)      \
-        if( IsKeyUp(key_name) )         \
-            vm->keys[key_value] = 0;
-    
-    CHIP8_KEYS_TABLE(X)
-
-    #undef X
-
 }
+
+#undef X 
+
+#define X(key_name, key_value)            \
+    if( IsKeyUp(key_name) )               \
+        vm->keys[key_value] = 0;
+
+void chip8_update_key_map_up(Chip8VM* vm){
+    CHIP8_KEYS_TABLE(X)
+}
+
+#undef X
 
 void chip8_update_display(
     Chip8VM* vm
