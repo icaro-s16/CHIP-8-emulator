@@ -6,7 +6,7 @@
 
 ## Demo 
 
-![CHIP-8 emulator]([https://github.com/icaro-s16/CHIP-8_emulator/CHIP-8_emulator/demo/demo.png](https://github.com/icaro-s16/CHIP-8_emulator/blob/main/demo/demo.png))
+![CHIP-8 emulator](https://github.com/icaro-s16/CHIP-8_emulator/blob/main/demo/demo.png)
 
 
 ## How to build it
