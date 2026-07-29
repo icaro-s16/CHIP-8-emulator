@@ -24,8 +24,8 @@ What is `<op per sec>`? This parameter controls how many instructions the emulat
 
 ## What I still want to do
 
-[ ] Implement a keypad visualizer
-[ ] Add debug options (breakpoints and pause execution)
+- [] Implement a keypad visualizer
+- [] Add debug options (breakpoints and pause execution)
 
 
 ## References 
