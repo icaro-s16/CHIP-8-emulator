@@ -13,7 +13,7 @@ static int chip8_sync_execution(
         *last_time
     );
     
-    *last_time = cur_time;
+    *last_time += (cur_time - *last_time);
 
     if (delta >= time_per_op){
         delta = delta - time_per_op;
@@ -34,7 +34,8 @@ static int chip8_sync_timer_update(
         *last_time
     );
 
-    *last_time = cur_time;
+    *last_time += (cur_time - *last_time);
+
     if (delta >= timer_update_per_sec){
         delta = delta - timer_update_per_sec;
         return 1;
@@ -63,20 +64,21 @@ void chip8_emulator_run(
     while(!WindowShouldClose()){
         
         chip8_update_keys_map(&vm);
-        if (chip8_sync_execution(&cpu_last_time, time_per_op)){
+        while(chip8_sync_execution(&cpu_last_time, time_per_op)){
             chip8_emulate_cycle(&vm);
-            chip8_update_display(&vm);
         }
 
         // DONE: Implement sound
         // DONE: Timer update sync
-        if (chip8_sync_timer_update(&timer_last_time)){
+        while(chip8_sync_timer_update(&timer_last_time)){
             if (vm.delay_timer > 0) vm.delay_timer -= 1;
             if (vm.sound_timer > 0) {
                 chip8_play_beep();
                 vm.sound_timer -= 1;
             }
         }
+
+        chip8_update_display(&vm);
     }
 
     chip8_destroy_display();
