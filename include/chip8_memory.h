@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
 enum {
     BUFFER_MAX_SIZE         = 50,
     CHIP8_DISPLAY_WIDTH     = 64,

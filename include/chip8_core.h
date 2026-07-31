@@ -7,15 +7,21 @@
 #include <assert.h>
 #include "chip8_memory.h"
 
+
+
 typedef uint8_t byte;
 
 typedef uint16_t addr;
 
-/*
+typedef struct Chip8VM Chip8VM;
 
-Instruction type | Opcode | Executor | Decoder
+typedef struct DecodedOpcode DecodedOpcode;
 
-*/
+typedef void (*ExecutorFunc)(Chip8VM*, const DecodedOpcode*);
+
+typedef void (*DecoderFunc)(const addr, DecodedOpcode*);
+
+/* Instruction type | Opcode | Executor | Decoder */
 #define CHIP8_INSTRUCTION_TABLE(X)                                   \
     X(CLS, 0x00E0u, execute_cls, decode_cls)                         \
     X(RTS, 0x00EEu, execute_rts, decode_rts)                         \
@@ -63,7 +69,6 @@ enum OpType{
 
 #undef X
 
-typedef struct Chip8VM Chip8VM;
 struct Chip8VM{
     char **dissasembly;
     Memory memory;                                              // Done: Change the memory logic
@@ -78,10 +83,9 @@ struct Chip8VM{
     byte sound_timer;    
 };
 
-typedef struct DecodedOpcode DecodedOpcode;
 struct DecodedOpcode{
     char mnemonic[50];
-    OpType optype;
+    const OpType optype;
     union{
 
         addr address;       
@@ -93,14 +97,14 @@ struct DecodedOpcode{
         };
 
     };
-    void (*execute)(Chip8VM*, const DecodedOpcode*);
+    const ExecutorFunc execute;
 };
 
 OpType chip8_get_optype(const addr _opcode);
 
-void chip8_set_executor(DecodedOpcode* decoded_opcode);
+const ExecutorFunc chip8_get_executor(const OpType optype);
 
-void* chip8_get_decoder(DecodedOpcode* decoded_opcode);
+const DecoderFunc chip8_get_decoder(DecodedOpcode* decoded_opcode);
 
 
 

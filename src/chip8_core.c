@@ -14,15 +14,15 @@ OpType chip8_get_optype(const addr _opcode){
 
 #define X(optype, opcode, executor, decoder)                \
     case optype:                                            \
-        decoded_opcode->execute = executor;                 \
+        return executor;                                    \
         break;
 
-void chip8_set_executor(DecodedOpcode* decoded_opcode){
-    switch (decoded_opcode->optype)
+const ExecutorFunc chip8_get_executor(const OpType optype){
+    switch (optype)
     {
     CHIP8_INSTRUCTION_TABLE(X)
     default:
-        break;
+        return NULL;    
     }
 }
 
@@ -32,7 +32,7 @@ void chip8_set_executor(DecodedOpcode* decoded_opcode){
     case optype:                                      \
         return decoder;
 
-void* chip8_get_decoder(DecodedOpcode* decoded_opcode){
+const DecoderFunc chip8_get_decoder(DecodedOpcode* decoded_opcode){
     switch (decoded_opcode->optype)
     {
         CHIP8_INSTRUCTION_TABLE(X)

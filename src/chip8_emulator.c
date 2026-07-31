@@ -102,9 +102,12 @@ static char** chip8_dissasembler_construct(
             mem->mem[pc + 1]
         );
 
-        DecodedOpcode decoded_opcode = {0};
-        decoded_opcode.optype= chip8_get_optype(opcode);
-        void (*opcode_decoder)(const addr, DecodedOpcode*) = chip8_get_decoder(&decoded_opcode); 
+        DecodedOpcode decoded_opcode = {
+            .optype = chip8_get_optype(opcode),
+            .execute = chip8_get_executor(decoded_opcode.optype)
+        };
+
+        const DecoderFunc opcode_decoder = chip8_get_decoder(&decoded_opcode); 
 
         assert(opcode_decoder != NULL);
 
@@ -144,11 +147,15 @@ static void chip8_emulate_cycle(
     
     vm->pc += 2;
 
-    DecodedOpcode decoded_opcode = {0};
-    decoded_opcode.optype = chip8_get_optype(opcode);
-    chip8_set_executor(&decoded_opcode);
-    void (*opcode_decoder)(const addr, DecodedOpcode*) = chip8_get_decoder(&decoded_opcode); 
+    DecodedOpcode decoded_opcode = {
+        .optype = chip8_get_optype(opcode),
+        .execute = chip8_get_executor(decoded_opcode.optype)
+    };
+
+    const DecoderFunc opcode_decoder = chip8_get_decoder(&decoded_opcode); 
+    
     opcode_decoder(opcode, &decoded_opcode);
+    
     decoded_opcode.execute(vm, &decoded_opcode);
 
     if (vm->pc >= MEM_MAX_SIZE){
