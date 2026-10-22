@@ -2,7 +2,7 @@
 
 ## About the project
 
-**My first emulator!** I am trying to organize my projects better and use unit tests to feel more confident when adding features to my code, so this is my first project with this level of organization.
+**My first emulator!**! And there is nothing better than the 'Hello, World!' of emulation.
 
 ## Demo 
 
@@ -25,7 +25,7 @@ To run the emulator, use the following base command:
 ./chip8Emulator <rom bin> <op per sec>
 ```
 
-What is `<op per sec>`? This parameter controls how many instructions the emulator will execute per second. If you leave this field blank, the default configuration will be used (700 operations per second).
+What is `<op per sec>`? This parameter controls how many instructions the emulator will execute per second. If you leave this field blank, the default configuration will be used (700 operations per second). 
 
 ## How to get the assembly of the ROM
 
@@ -35,6 +35,7 @@ So you want to see the instructions of your ROM and the mnemonics that I use? I 
 ## What I still want to do
 
 - [ ] Implement a keypad visualizer
+- [ ] Implement sound
 - [ ] Add debug options (breakpoints and pause execution)
 
 
