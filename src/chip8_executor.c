@@ -219,7 +219,7 @@ void execute_sprite(
             if (*screen_pixel > 0)
                 vm->V[0xFu] = 1;
                 
-            *screen_pixel ^= 0xFFFFFFFF;
+            *screen_pixel ^= RGBA_PIXEL_COLOR;
         }
     }
 }

@@ -18,7 +18,8 @@ enum {
     PC_INITIAL_OFFSET       = 512,
     FONTSET_INITIAL_OFFSET  = 80,
     SCALE                   = 20,
-    FPS                     = 60
+    FPS                     = 60,
+    RGBA_PIXEL_COLOR        = 0x00FF00FF
 };
 
 typedef uint8_t byte;
