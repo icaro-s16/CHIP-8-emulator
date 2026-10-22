@@ -5,7 +5,7 @@ int main(
     int argc, 
     char** argv
 ){
-    uint32_t op_per_sec = 700;
+    uint32_t op_per_sec = 500;
 
     if (argc > 3 || argc < 2){
         fprintf(
@@ -16,7 +16,7 @@ int main(
     }
 
     if (argc < 3)
-        printf("INFO: The emulator will use 700 operation per sec, you can change it passing the desired value \"./<bin> <rom path> <operation per sec>\"..\n");
+        printf("INFO: The emulator will use 500 operation per sec, you can change it passing the desired value \"./<bin> <rom path> <operation per sec>\"..\n");
     else if (
         sscanf(argv[2], "%lu", &op_per_sec) != 1 
     ){

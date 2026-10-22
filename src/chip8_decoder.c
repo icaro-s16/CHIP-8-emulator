@@ -1,7 +1,5 @@
 #include "chip8_decoder.h"
 
-
-
 void decode_rts(const addr opcode, DecodedOpcode* decoded_opcode){
     assert(decoded_opcode != NULL);
     assert(decoded_opcode->optype == RTS);

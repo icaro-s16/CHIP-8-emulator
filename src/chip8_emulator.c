@@ -1,55 +1,11 @@
 #include "chip8_emulator.h"
 
-
-
-static int chip8_sync_execution(
-    double *last_time, 
-    const double time_per_op
-){
-    static double delta = 0;
-    double cur_time = GetTime();
-    delta += (
-        cur_time -
-        *last_time
-    );
-    
-    *last_time += (cur_time - *last_time);
-
-    if (delta >= time_per_op){
-        delta = delta - time_per_op;
-        return 1;
-    }
-    
-    return 0;
-}
-
-static int chip8_sync_timer_update(
-    double *last_time
-){
-    const double timer_update_per_sec = 1 / 60.0 ;
-    static double delta = 0; 
-    double cur_time = GetTime();
-    delta += (
-        cur_time -
-        *last_time
-    );
-
-    *last_time += (cur_time - *last_time);
-
-    if (delta >= timer_update_per_sec){
-        delta = delta - timer_update_per_sec;
-        return 1;
-    }
-
-    return 0;
-}
-
 void chip8_emulator_run(
     const char* rom_name,
     const uint32_t op_per_sec
 ){
     assert(rom_name != NULL);
-
+    
     srand(time(NULL));
         
     Chip8VM vm = chip8_vm_construct(rom_name);  
@@ -58,27 +14,39 @@ void chip8_emulator_run(
     
     chip8_construct_display();
 
-    double time_per_op = 1.0 / op_per_sec; 
-    double cpu_last_time, timer_last_time = GetTime(), GetTime();
+    int quit = 0;
 
-    while(!WindowShouldClose()){
+    int op_per_frame = ceil(op_per_sec/FPS);
+    double delay = 1.0/FPS; 
+    struct timespec last_time;
+    clock_gettime(CLOCK_MONOTONIC, &last_time);
+
+    while(!quit){
         
-        chip8_update_keys_map(&vm);
-        while(chip8_sync_execution(&cpu_last_time, time_per_op)){
+        quit = chip8_update_keys_map(&vm);
+        
+        struct timespec current_time;
+        clock_gettime(CLOCK_MONOTONIC, &current_time);
+
+        double delta = 
+            (current_time.tv_sec + current_time.tv_nsec / (double)1e9) 
+            - (last_time.tv_sec + last_time.tv_nsec / (double)1e9);
+
+        if (delta < delay) continue;
+
+        delta -= delay;
+        last_time = current_time;
+        
+        for (int _op = 0; _op < op_per_frame; _op ++ ){
             chip8_emulate_cycle(&vm);
         }
 
-        // DONE: Implement sound
-        // DONE: Timer update sync
-        while(chip8_sync_timer_update(&timer_last_time)){
-            if (vm.delay_timer > 0) vm.delay_timer -= 1;
-            if (vm.sound_timer > 0) {
-                chip8_play_beep();
-                vm.sound_timer -= 1;
-            }
+        if (vm.should_update_display) {
+            chip8_update_display(&vm);
+            vm.should_update_display = 0;
         }
-
-        chip8_update_display(&vm);
+        if (vm.delay_timer > 0) vm.delay_timer -= 1;
+        if (vm.sound_timer > 0) vm.sound_timer -= 1;
     }
 
     chip8_destroy_display();

@@ -1,13 +1,25 @@
 #pragma once
 
+#define _XOPEN_SOURCE 600
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include "chip8_memory.h"
+#include <stdint.h>
 
-
+enum {
+    BUFFER_MAX_SIZE         = 50,
+    CHIP8_DISPLAY_WIDTH     = 64,
+    CHIP8_DISPLAY_HEIGHT    = 32,
+    KEYS_SIZE               = 16,
+    MEM_MAX_SIZE            = 4096,
+    V_REG_SIZE              = 16,
+    PC_INITIAL_OFFSET       = 512,
+    FONTSET_INITIAL_OFFSET  = 80,
+    SCALE                   = 20,
+    FPS                     = 60
+};
 
 typedef uint8_t byte;
 
@@ -71,8 +83,11 @@ enum OpType{
 
 struct Chip8VM{
     char **dissasembly;
-    Memory memory;                                              // Done: Change the memory logic
-    byte display[CHIP8_DISPLAY_HEIGHT][CHIP8_DISPLAY_WIDTH];
+    struct Memory{
+        byte mem[MEM_MAX_SIZE];
+        size_t rom_size;
+    } memory;                                              
+    uint32_t display[CHIP8_DISPLAY_HEIGHT * CHIP8_DISPLAY_WIDTH];
     addr stack[16];
     byte keys[KEYS_SIZE];
     byte V[V_REG_SIZE];
@@ -80,8 +95,11 @@ struct Chip8VM{
     addr pc;
     byte sp;
     byte delay_timer;
-    byte sound_timer;    
+    byte sound_timer;
+    uint8_t should_update_display;
 };
+
+typedef struct Memory Memory;
 
 struct DecodedOpcode{
     char mnemonic[50];
@@ -99,6 +117,10 @@ struct DecodedOpcode{
     };
     const ExecutorFunc execute;
 };
+
+static void load_rom(Memory* mem, const char* rom_name);
+
+Memory chip8_memory_construct(const char* rom_name);
 
 OpType chip8_get_optype(const addr _opcode);
 

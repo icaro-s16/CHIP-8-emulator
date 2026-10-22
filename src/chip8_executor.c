@@ -198,6 +198,8 @@ void execute_sprite(
     assert(vm != NULL);
     assert(decoded_opcode != NULL);
 
+    vm->should_update_display = 1;
+
     if (decoded_opcode->optype !=  SPRITE)
         execute_err(decoded_opcode);
 
@@ -207,14 +209,17 @@ void execute_sprite(
     for(int row = 0; row < decoded_opcode->constant; row++){
         byte sprite_byte = vm->memory.mem[vm->I + row];
         for(int col = 0; col < 8; col++){
-            byte *screen_pixel = &(vm->display[(y + row) % CHIP8_DISPLAY_HEIGHT][(x + col) % CHIP8_DISPLAY_WIDTH]);
+            if ((y + row) > CHIP8_DISPLAY_HEIGHT || (x + col) > CHIP8_DISPLAY_WIDTH) continue;
+            
+            uint32_t *screen_pixel = &(vm->display[(y + row) * CHIP8_DISPLAY_WIDTH + (x + col)]);
+
             if (!(sprite_byte & (0x80u >> col)))
                 continue;
 
             if (*screen_pixel > 0)
                 vm->V[0xFu] = 1;
                 
-            *screen_pixel ^= 1;
+            *screen_pixel ^= 0xFFFFFFFF;
         }
     }
 }
@@ -294,7 +299,7 @@ void execute_jmi(
     if (decoded_opcode->optype !=  JMI)
         execute_err(decoded_opcode);
 
-    vm->pc = vm->V[0] + decoded_opcode->address;
+    vm->pc = vm->V[decoded_opcode->address >> 8] + decoded_opcode->address;
 }
 
 void execute_skpr(
@@ -335,8 +340,23 @@ void execute_key(
     if (decoded_opcode->optype !=  KEY)
         execute_err(decoded_opcode);
 
-    if (!chip8_is_key_down(vm))
-        vm->pc -= 2;
+    if (vm->keys[0]) {vm->V[0] = 0;}
+    else if (vm->keys[1]) {vm->V[1] = 1;}
+    else if (vm->keys[2]) {vm->V[2] = 2;}
+    else if (vm->keys[3]) {vm->V[3] = 3;}
+    else if (vm->keys[4]) {vm->V[4] = 4;}
+    else if (vm->keys[5]) {vm->V[5] = 5;}
+    else if (vm->keys[6]) {vm->V[6] = 6;}
+    else if (vm->keys[7]) {vm->V[7] = 7;}
+    else if (vm->keys[8]) {vm->V[8] = 8;}
+    else if (vm->keys[9]) {vm->V[9] = 9;}
+    else if (vm->keys[10]) {vm->V[10] = 10;}
+    else if (vm->keys[11]) {vm->V[11] = 11;}
+    else if (vm->keys[12]) {vm->V[12] = 12;}
+    else if (vm->keys[13]) {vm->V[13] = 13;}
+    else if (vm->keys[14]) {vm->V[14] = 14;}
+    else if (vm->keys[15]) {vm->V[15] = 15;}
+    else {vm->pc -= 2;}
 }
 
 void execute_addi(
